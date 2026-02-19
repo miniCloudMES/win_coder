@@ -1,0 +1,33 @@
+{
+  "name": "promes-dashboard",
+  "version": "2.0.0",
+  "description": "ProMES 智慧製造執行系統 - 現代化儀表板",
+  "main": "mes_dashboard_vue.html",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "npx http-server -p 3000"
+  },
+  "keywords": [
+    "MES",
+    "製造執行系統",
+    "儀表板",
+    "Vue3",
+    "TailwindCSS"
+  ],
+  "author": "ProMES Team",
+  "license": "MIT",
+  "dependencies": {
+    "vue": "^3.4.0",
+    "chart.js": "^4.4.0",
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.0",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.4.0",
+    "vite": "^5.0.0"
+  }
+}

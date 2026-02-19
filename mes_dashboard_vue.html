@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProMES 智慧製造儀表板</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#667eea',
+                        secondary: '#764ba2',
+                        success: '#48bb78',
+                        warning: '#ecc94b',
+                        danger: '#f56565',
+                        info: '#4299e1'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .gradient-success {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        }
+        
+        .gradient-warning {
+            background: linear-gradient(135deg, #ecc94b 0%, #d69e2e 100%);
+        }
+        
+        .gradient-danger {
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+        }
+        
+        .card-shadow {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        .hover-card {
+            transition: all 0.3s ease;
+        }
+        
+        .hover-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .pulse-dot {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .sidebar-link {
+            transition: all 0.2s;
+        }
+        
+        .sidebar-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-link.active {
+            background: rgba(255, 255, 255, 0.2);
+            border-left: 3px solid white;
+        }
+        
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div id="app" v-cloak>
+        <!-- Top Navigation -->
+        <nav class="gradient-primary text-white shadow-lg sticky top-0 z-50">
+            <div class="container mx-auto px-4">
+                <div class="flex justify-between items-center py-3">
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-industry text-2xl"></i>
+                        <h1 class="text-xl font-bold">ProMES 智慧製造系統</h1>
+                    </div>
+                    
+                    <div class="flex items-center space-x-6">
+                        <a href="mes_landing_page.html" class="hover:opacity-80 transition">
+                            <i class="fas fa-home mr-2"></i>回首頁
+                        </a>
+                        <div class="relative">
+                            <i class="fas fa-bell text-lg"></i>
+                            <span v-if="alerts.length > 0" class="absolute -top-2 -right-2 bg-red-500 text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                                {{ alerts.length }}
+                            </span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-8 h-8 bg-white bg-opacity-30 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <span>管理員</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="flex">
+            <!-- Sidebar -->
+            <aside class="w-64 bg-gray-800 text-white min-h-screen p-4">
+                <div class="mb-6">
+                    <h2 class="text-xs uppercase text-gray-400 font-semibold mb-2">主功能</h2>
+                    <nav class="space-y-1">
+                        <a v-for="item in mainMenu" :key="item.id" 
+                           :href="item.href"
+                           @click.prevent="currentMenu = item.id"
+                           :class="['sidebar-link flex items-center px-3 py-2 rounded-lg', { active: currentMenu === item.id }]">
+                            <i :class="[item.icon, 'w-6']"></i>
+                            <span>{{ item.label }}</span>
+                        </a>
+                    </nav>
+                </div>
+                
+                <div>
+                    <h2 class="text-xs uppercase text-gray-400 font-semibold mb-2">報表與分析</h2>
+                    <nav class="space-y-1">
+                        <a v-for="item in reportMenu" :key="item.id" 
+                           :href="item.href"
+                           @click.prevent="currentMenu = item.id"
+                           :class="['sidebar-link flex items-center px-3 py-2 rounded-lg', { active: currentMenu === item.id }]">
+                            <i :class="[item.icon, 'w-6']"></i>
+                            <span>{{ item.label }}</span>
+                        </a>
+                    </nav>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="flex-1 p-6">
+                <!-- Page Header -->
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800">生產管理儀表板</h2>
+                        <p class="text-gray-600 text-sm mt-1">
+                            <i class="fas fa-clock mr-2"></i>
+                            最後更新：{{ currentTime }}
+                        </p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <span class="flex items-center text-sm text-green-600">
+                            <span class="pulse-dot inline-block w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                            即時連線
+                        </span>
+                        <button @click="refreshData" class="gradient-primary text-white px-4 py-2 rounded-lg hover:opacity-90 transition">
+                            <i class="fas fa-sync-alt mr-2"></i>重新整理
+                        </button>
+                    </div>
+                </div>
+
+                <!-- KPI Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                    <div v-for="kpi in kpiData" :key="kpi.id" 
+                         class="bg-white rounded-xl card-shadow hover-card p-6 border-l-4"
+                         :class="kpi.borderClass">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <p class="text-gray-500 text-sm font-medium">{{ kpi.title }}</p>
+                                <h3 class="text-3xl font-bold text-gray-800 mt-2">{{ kpi.value }}</h3>
+                            </div>
+                            <div :class="['w-12 h-12 rounded-lg flex items-center justify-center text-white', kpi.bgClass]">
+                                <i :class="[kpi.icon, 'text-xl']"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center text-sm">
+                            <span :class="kpi.trend > 0 ? 'text-green-500' : 'text-red-500'" class="font-semibold">
+                                <i :class="kpi.trend > 0 ? 'fas fa-arrow-up' : 'fas fa-arrow-down'"></i>
+                                {{ Math.abs(kpi.trend) }}%
+                            </span>
+                            <span class="text-gray-500 ml-2">較昨日</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <!-- Production Trend Chart -->
+                    <div class="bg-white rounded-xl card-shadow p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-bold text-gray-800">
+                                <i class="fas fa-chart-line text-primary mr-2"></i>
+                                生產趨勢分析
+                            </h3>
+                            <div class="flex space-x-2">
+                                <button v-for="period in ['日', '週', '月']" :key="period"
+                                        @click="productionPeriod = period"
+                                        :class="['px-3 py-1 rounded-lg text-sm transition', 
+                                                  productionPeriod === period ? 'gradient-primary text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200']">
+                                    {{ period }}
+                                </button>
+                            </div>
+                        </div>
+                        <div class="h-80">
+                            <canvas id="productionChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Quality Analysis Chart -->
+                    <div class="bg-white rounded-xl card-shadow p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-bold text-gray-800">
+                                <i class="fas fa-chart-pie text-info mr-2"></i>
+                                品質分析
+                            </h3>
+                            <div class="flex space-x-2">
+                                <button v-for="type in ['不良類型', '製程別']" :key="type"
+                                        @click="qualityType = type"
+                                        :class="['px-3 py-1 rounded-lg text-sm transition', 
+                                                  qualityType === type ? 'gradient-primary text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200']">
+                                    {{ type }}
+                                </button>
+                            </div>
+                        </div>
+                        <div class="h-80 flex items-center justify-center">
+                            <canvas id="qualityChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Production Lines Table -->
+                <div class="bg-white rounded-xl card-shadow mb-6">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-lg font-bold text-gray-800">
+                                <i class="fas fa-conveyor-belt text-success mr-2"></i>
+                                生產線狀態監控
+                            </h3>
+                            <span class="text-sm text-gray-500">
+                                <span class="pulse-dot inline-block w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                                即時更新
+                            </span>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">生產線</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">產品型號</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">目標產量</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">實際產量</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">達成率</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">狀態</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <tr v-for="line in productionLines" :key="line.id" class="hover:bg-gray-50 transition">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="font-semibold text-gray-800">{{ line.name }}</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-gray-600">{{ line.product }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-gray-600">{{ line.target.toLocaleString() }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-gray-600">{{ line.actual.toLocaleString() }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-24 bg-gray-200 rounded-full h-2">
+                                                <div class="h-2 rounded-full transition-all duration-500"
+                                                     :class="getProgressColor(line.achievement)"
+                                                     :style="{ width: line.achievement + '%' }"></div>
+                                            </div>
+                                            <span class="text-sm font-medium">{{ line.achievement }}%</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span :class="getStatusClass(line.status)" class="px-3 py-1 rounded-full text-xs font-medium">
+                                            {{ line.statusText }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <button class="text-primary hover:text-primary-dark font-medium transition">
+                                            檢視
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Alerts and Progress -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Alerts Panel -->
+                    <div class="bg-white rounded-xl card-shadow">
+                        <div class="p-6 border-b border-gray-200">
+                            <h3 class="text-lg font-bold text-gray-800">
+                                <i class="fas fa-bell text-warning mr-2"></i>
+                                即時警報
+                            </h3>
+                        </div>
+                        <div class="p-6 space-y-4">
+                            <div v-for="alert in alerts" :key="alert.id"
+                                 :class="['p-4 rounded-lg border-l-4', alert.bgClass]">
+                                <div class="flex items-start justify-between">
+                                    <div class="flex items-start space-x-3">
+                                        <span class="text-2xl">{{ alert.icon }}</span>
+                                        <div>
+                                            <h4 class="font-semibold text-gray-800">{{ alert.title }}</h4>
+                                            <p class="text-sm text-gray-500 mt-1">{{ alert.time }} • {{ alert.category }}</p>
+                                        </div>
+                                    </div>
+                                    <button class="gradient-primary text-white px-4 py-2 rounded-lg text-sm hover:opacity-90 transition">
+                                        處理
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Order Progress -->
+                    <div class="bg-white rounded-xl card-shadow">
+                        <div class="p-6 border-b border-gray-200">
+                            <h3 class="text-lg font-bold text-gray-800">
+                                <i class="fas fa-tasks text-info mr-2"></i>
+                                訂單生產進度
+                            </h3>
+                        </div>
+                        <div class="p-6 space-y-6">
+                            <div v-for="order in orders" :key="order.id">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="font-medium text-gray-700">{{ order.name }}</span>
+                                    <span class="text-sm font-semibold" :class="getProgressColorText(order.progress)">{{ order.progress }}%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-3">
+                                    <div class="h-3 rounded-full transition-all duration-500"
+                                         :class="getProgressColor(order.progress)"
+                                         :style="{ width: order.progress + '%' }"></div>
+                                </div>
+                                <div class="flex justify-between mt-1 text-xs text-gray-500">
+                                    <span>預計：{{ order.estimated }}</span>
+                                    <span>剩餘：{{ order.remaining }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    currentTime: '',
+                    currentMenu: 'dashboard',
+                    productionPeriod: '日',
+                    qualityType: '不良類型',
+                    
+                    kpiData: [
+                        {
+                            id: 1,
+                            title: '設備綜合效率 (OEE)',
+                            value: '87.5%',
+                            trend: 3.2,
+                            icon: 'fas fa-bolt',
+                            borderClass: 'border-success',
+                            bgClass: 'gradient-success'
+                        },
+                        {
+                            id: 2,
+                            title: '今日產量',
+                            value: '2,847',
+                            trend: 4.5,
+                            icon: 'fas fa-box',
+                            borderClass: 'border-primary',
+                            bgClass: 'gradient-primary'
+                        },
+                        {
+                            id: 3,
+                            title: '良品率',
+                            value: '98.8%',
+                            trend: 0.3,
+                            icon: 'fas fa-check-circle',
+                            borderClass: 'border-info',
+                            bgClass: 'gradient-info'
+                        },
+                        {
+                            id: 4,
+                            title: '不良率',
+                            value: '1.2%',
+                            trend: -0.1,
+                            icon: 'fas fa-exclamation-triangle',
+                            borderClass: 'border-warning',
+                            bgClass: 'gradient-warning'
+                        }
+                    ],
+                    
+                    productionLines: [
+                        { id: 1, name: '生產線 A', product: 'MES-2024-A01', target: 1000, actual: 987, achievement: 98.7, status: 'running', statusText: '運行中' },
+                        { id: 2, name: '生產線 B', product: 'MES-2024-B02', target: 800, actual: 756, achievement: 94.5, status: 'running', statusText: '運行中' },
+                        { id: 3, name: '生產線 C', product: 'MES-2024-C03', target: 600, actual: 0, achievement: 0, status: 'maintenance', statusText: '維修中' },
+                        { id: 4, name: '生產線 D', product: 'MES-2024-D04', target: 1200, actual: 1104, achievement: 92.0, status: 'idle', statusText: '待料中' }
+                    ],
+                    
+                    alerts: [
+                        { id: 1, title: '生產線 C 緊急停機', time: '10 分鐘前', category: '設備異常', icon: '🚨', bgClass: 'bg-red-50 border-red-500' },
+                        { id: 2, title: '原料庫存低於警戒值', time: '25 分鐘前', category: '物料管理', icon: '⚠️', bgClass: 'bg-yellow-50 border-yellow-500' },
+                        { id: 3, title: '定期維護提醒 - 生產線 A', time: '1 小時前', category: '設備維護', icon: 'ℹ️', bgClass: 'bg-blue-50 border-blue-500' }
+                    ],
+                    
+                    orders: [
+                        { id: 1, name: '訂單 #2024-001', progress: 85, estimated: '2024-02-25', remaining: '450 件' },
+                        { id: 2, name: '訂單 #2024-002', progress: 92, estimated: '2024-02-22', remaining: '180 件' },
+                        { id: 3, name: '訂單 #2024-003', progress: 45, estimated: '2024-03-01', remaining: '1,100 件' },
+                        { id: 4, name: '訂單 #2024-004', progress: 23, estimated: '2024-03-10', remaining: '2,300 件' }
+                    ],
+                    
+                    mainMenu: [
+                        { id: 'dashboard', label: '總覽儀表板', icon: 'fas fa-chart-line', href: '#' },
+                        { id: 'production', label: '生產監控', icon: 'fas fa-industry', href: '#' },
+                        { id: 'quality', label: '品質管理', icon: 'fas fa-clipboard-check', href: '#' },
+                        { id: 'inventory', label: '庫存管理', icon: 'fas fa-boxes', href: '#' },
+                        { id: 'personnel', label: '人員管理', icon: 'fas fa-users', href: '#' },
+                        { id: 'maintenance', label: '設備維護', icon: 'fas fa-tools', href: '#' }
+                    ],
+                    
+                    reportMenu: [
+                        { id: 'analysis', label: '數據分析', icon: 'fas fa-chart-bar', href: '#' },
+                        { id: 'reports', label: '報表中心', icon: 'fas fa-file-alt', href: '#' },
+                        { id: 'settings', label: '系統設定', icon: 'fas fa-cog', href: '#' }
+                    ],
+                    
+                    productionChart: null,
+                    qualityChart: null
+                }
+            },
+            
+            mounted() {
+                this.updateTime();
+                setInterval(this.updateTime, 1000);
+                this.$nextTick(() => {
+                    this.initCharts();
+                });
+            },
+            
+            methods: {
+                updateTime() {
+                    const now = new Date();
+                    this.currentTime = now.toLocaleString('zh-TW', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit'
+                    });
+                },
+                
+                getStatusClass(status) {
+                    const classes = {
+                        running: 'bg-green-100 text-green-800',
+                        idle: 'bg-yellow-100 text-yellow-800',
+                        maintenance: 'bg-red-100 text-red-800',
+                        stopped: 'bg-gray-100 text-gray-800'
+                    };
+                    return classes[status] || classes.stopped;
+                },
+                
+                getProgressColor(value) {
+                    if (value >= 90) return 'bg-green-500';
+                    if (value >= 70) return 'bg-yellow-500';
+                    return 'bg-red-500';
+                },
+                
+                getProgressColorText(value) {
+                    if (value >= 90) return 'text-green-600';
+                    if (value >= 70) return 'text-yellow-600';
+                    return 'text-red-600';
+                },
+                
+                refreshData() {
+                    // Simulate data refresh
+                    this.kpiData.forEach(kpi => {
+                        kpi.value = (parseFloat(kpi.value) * (1 + Math.random() * 0.02 - 0.01)).toFixed(1);
+                    });
+                },
+                
+                initCharts() {
+                    // Production Chart
+                    const prodCtx = document.getElementById('productionChart').getContext('2d');
+                    this.productionChart = new Chart(prodCtx, {
+                        type: 'line',
+                        data: {
+                            labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
+                            datasets: [{
+                                label: '實際產量',
+                                data: [120, 180, 450, 680, 890, 1020],
+                                borderColor: '#667eea',
+                                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                                tension: 0.4,
+                                fill: true
+                            }, {
+                                label: '目標產量',
+                                data: [150, 200, 400, 600, 850, 1000],
+                                borderColor: '#48bb78',
+                                borderDash: [5, 5],
+                                tension: 0.4,
+                                fill: false
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: true,
+                                    position: 'top'
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                    
+                    // Quality Chart
+                    const qualCtx = document.getElementById('qualityChart').getContext('2d');
+                    this.qualityChart = new Chart(qualCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['良品', '外觀不良', '尺寸偏差', '功能異常', '其他'],
+                            datasets: [{
+                                data: [988, 5, 4, 2, 1],
+                                backgroundColor: [
+                                    '#48bb78',
+                                    '#f56565',
+                                    '#ecc94b',
+                                    '#4299e1',
+                                    '#a0aec0'
+                                ],
+                                borderWidth: 0
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'right'
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
