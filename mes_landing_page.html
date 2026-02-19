@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProMES - 專業製造執行系統</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .logo i {
+            margin-right: 10px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav li {
+            margin-left: 2rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+
+        nav a:hover {
+            opacity: 0.8;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400"><rect width="1200" height="400" fill="%234a5568"/><path d="M0,200 Q300,100 600,200 T1200,200 L1200,400 L0,400 Z" fill="%232d3748"/></svg>');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 6rem 2rem;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: #ff6b6b;
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: transform 0.3s, box-shadow 0.3s;
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255,107,107,0.4);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 5rem 0;
+            background: white;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #2d3748;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #667eea;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #2d3748;
+        }
+
+        /* Dashboard Preview */
+        .dashboard {
+            padding: 5rem 0;
+            background: #f8f9fa;
+        }
+
+        .dashboard-preview {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Industries Section */
+        .industries {
+            padding: 5rem 0;
+            background: white;
+        }
+
+        .industries-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .industry-item {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 10px;
+            background: #f8f9fa;
+            transition: transform 0.3s;
+        }
+
+        .industry-item:hover {
+            transform: scale(1.05);
+        }
+
+        /* Testimonials */
+        .testimonials {
+            padding: 5rem 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .testimonial {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .testimonial-text {
+            font-size: 1.2rem;
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+
+        .testimonial-author {
+            font-weight: bold;
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 5rem 0;
+            background: white;
+        }
+
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #2d3748;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        footer {
+            background: #2d3748;
+            color: white;
+            padding: 3rem 0 1rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            color: #667eea;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: #cbd5e0;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .copyright {
+            border-top: 1px solid #4a5568;
+            padding-top: 1rem;
+            font-size: 0.9rem;
+            color: #a0aec0;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            nav ul {
+                margin-top: 1rem;
+                justify-content: center;
+            }
+
+            nav li {
+                margin: 0 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i>🏭</i> ProMES
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#features">功能特色</a></li>
+                    <li><a href="#dashboard">儀表板</a></li>
+                    <li><a href="#industries">適用產業</a></li>
+                    <li><a href="#contact">聯絡我們</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>智慧製造執行系統</h1>
+            <p>提升生產效率、優化資源配置、實現即時監控的專業MES解決方案</p>
+            <a href="#contact" class="cta-button">免費諮詢</a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">核心功能</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>即時監控</h3>
+                    <p>即時追蹤生產狀態、設備運行狀況和品質指標，提供即時警報和通知。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>生產排程</h3>
+                    <p>智能排程演算法優化生產順序，減少換線時間，最大化設備利用率。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔬</div>
+                    <h3>品質管理</h3>
+                    <p>完整的品質控制流程，從原料檢驗到成品測試，確保產品符合標準。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <h3>成本控制</h3>
+                    <p>精確計算物料消耗、人工成本和設備折舊，優化資源配置降低成本。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3>追溯系統</h3>
+                    <p>完整的產品追溯能力，從原料到成品全程可追蹤，確保品質安全。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3>數據分析</h3>
+                    <p>強大的數據分析功能，提供決策支援和持續改善建議。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Preview -->
+    <section class="dashboard" id="dashboard">
+        <div class="container">
+            <h2 class="section-title">儀表板預覽</h2>
+            <div class="dashboard-preview">
+                <div class="dashboard-header">
+                    <h3>生產概況</h3>
+                    <div>即時更新 • 最後更新: <span id="current-time"></span></div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-number">94.2%</span>
+                        <span class="stat-label">設備利用率</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">98.5%</span>
+                        <span class="stat-label">良品率</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">1,247</span>
+                        <span class="stat-label">今日產量</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">0.8%</span>
+                        <span class="stat-label">不良率</span>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                    <div style="background: #f8f9fa; padding: 1rem; border-radius: 5px;">
+                        <h4>生產線狀態</h4>
+                        <div style="margin-top: 1rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>生產線A</span>
+                                <span style="color: #48bb78;">運行中</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>生產線B</span>
+                                <span style="color: #ecc94b;">待機中</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>生產線C</span>
+                                <span style="color: #f56565;">維修中</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 1rem; border-radius: 5px;">
+                        <h4>即時警報</h4>
+                        <div style="margin-top: 1rem;">
+                            <div style="color: #f56565; margin-bottom: 0.5rem;">
+                                ⚠️ 生產線C 需要維護
+                            </div>
+                            <div style="color: #ecc94b; margin-bottom: 0.5rem;">
+                                ⏰ 原料庫存低於警戒值
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Industries Section -->
+    <section class="industries" id="industries">
+        <div class="container">
+            <h2 class="section-title">適用產業</h2>
+            <div class="industries-grid">
+                <div class="industry-item">
+                    <div style="font-size: 2rem; margin-bottom: 1rem;">📱</div>
+                    <h4>電子製造</h4>
+                    <p>SMT、PCB、半導體</p>
+                </div>
+                <div class="industry-item">
+                    <div style="font-size: 2rem; margin-bottom: 1rem;">🚗</div>
+                    <h4>汽車工業</h4>
+                    <p>零組件製造、組裝線</p>
+                </div>
+                <div class="industry-item">
+                    <div style="font-size: 2rem; margin-bottom: 1rem;">💊</div>
+                    <h4>生技醫藥</h4>
+                    <p>藥品、醫療器材</p>
+                </div>
+                <div class="industry-item">
+                    <div style="font-size: 2rem; margin-bottom: 1rem;">👕</div>
+                    <h4>紡織成衣</h4>
+                    <p>布料、服飾製造</p>
+                </div>
+                <div class="industry-item">
+                    <div style="font-size: 2rem; margin-bottom: 1rem;">🥫</div>
+                    <h4>食品加工</h4>
+                    <p>食品安全追溯</p>
+                </div>
+                <div class="industry-item">
+                    <div style="font-size: 2rem; margin-bottom: 1rem;">🏠</div>
+                    <h4>精密機械</h4>
+                    <p>金屬加工、模具</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials">
+        <div class="container">
+            <h2 class="section-title" style="color: white;">客戶見證</h2>
+            <div class="testimonial">
+                <div class="testimonial-text">
+                    "導入ProMES後，我們的生產效率提升了30%，品質問題減少了50%。即時監控功能讓管理者能夠快速反應異常狀況。"
+                </div>
+                <div class="testimonial-author">— 某電子製造公司 總經理</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="container">
+            <h2 class="section-title">聯絡我們</h2>
+            <div class="contact-form">
+                <form id="contactForm">
+                    <div class="form-group">
+                        <label for="company">公司名稱</label>
+                        <input type="text" id="company" name="company" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contactPerson">聯絡人姓名</label>
+                        <input type="text" id="contactPerson" name="contactPerson" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">電子郵件</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">電話號碼</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="industry">主要產業</label>
+                        <select id="industry" name="industry" required>
+                            <option value="">請選擇</option>
+                            <option value="electronics">電子製造</option>
+                            <option value="automotive">汽車工業</option>
+                            <option value="pharmaceutical">生技醫藥</option>
+                            <option value="textile">紡織成衣</option>
+                            <option value="food">食品加工</option>
+                            <option value="machinery">精密機械</option>
+                            <option value="other">其他</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">需求說明</label>
+                        <textarea id="message" name="message" rows="5" placeholder="請描述您的MES系統需求..."></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">送出諮詢</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>ProMES</h3>
+                    <p>專業製造執行系統解決方案提供商</p>
+                </div>
+                <div class="footer-section">
+                    <h3>快速連結</h3>
+                    <ul class="footer-links">
+                        <li><a href="#features">功能特色</a></li>
+                        <li><a href="#dashboard">儀表板</a></li>
+                        <li><a href="#industries">適用產業</a></li>
+                        <li><a href="#contact">聯絡我們</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>聯絡資訊</h3>
+                    <ul class="footer-links">
+                        <li>📞 (02) 1234-5678</li>
+                        <li>✉️ info@promes.com.tw</li>
+                        <li>🏢 台北市內湖區文德路200號</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                © 2024 ProMES. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Update current time
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('current-time').textContent = now.toLocaleString('zh-TW');
+        }
+        
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        // Form submission handler
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('感謝您的諮詢！我們將盡快與您聯繫。');
+            this.reset();
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
