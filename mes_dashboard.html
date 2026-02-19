@@ -275,6 +275,7 @@
         .chart-container {
             height: 300px;
             position: relative;
+            overflow: hidden;
         }
 
         /* Production Lines Table */
@@ -659,32 +660,31 @@
                         </div>
                     </div>
                     <div class="chart-container">
-                        <canvas id="productionChart"></canvas>
-                        <div style="display: flex; justify-content: space-around; align-items: flex-end; height: 100%; padding-top: 20px;">
-                            <div style="text-align: center;">
-                                <div style="height: 180px; width: 40px; background: linear-gradient(180deg, #667eea 0%, #764ba2 100%); border-radius: 5px 5px 0 0; margin: 0 auto;"></div>
-                                <div style="margin-top: 10px; font-weight: 600;">一</div>
-                                <div style="font-size: 0.85rem; color: #718096;">2,450</div>
+                        <div style="display: flex; justify-content: space-around; align-items: flex-end; height: 220px; padding: 20px 10px 0; overflow: hidden;">
+                            <div style="text-align: center; flex: 1; max-width: 80px;">
+                                <div style="height: 160px; width: 40px; background: linear-gradient(180deg, #667eea 0%, #764ba2 100%); border-radius: 5px 5px 0 0; margin: 0 auto;"></div>
+                                <div style="margin-top: 8px; font-weight: 600; font-size: 0.9rem;">一</div>
+                                <div style="font-size: 0.8rem; color: #718096;">2,450</div>
                             </div>
-                            <div style="text-align: center;">
-                                <div style="height: 220px; width: 40px; background: linear-gradient(180deg, #667eea 0%, #764ba2 100%); border-radius: 5px 5px 0 0; margin: 0 auto;"></div>
-                                <div style="margin-top: 10px; font-weight: 600;">二</div>
-                                <div style="font-size: 0.85rem; color: #718096;">2,680</div>
+                            <div style="text-align: center; flex: 1; max-width: 80px;">
+                                <div style="height: 190px; width: 40px; background: linear-gradient(180deg, #667eea 0%, #764ba2 100%); border-radius: 5px 5px 0 0; margin: 0 auto;"></div>
+                                <div style="margin-top: 8px; font-weight: 600; font-size: 0.9rem;">二</div>
+                                <div style="font-size: 0.8rem; color: #718096;">2,680</div>
                             </div>
-                            <div style="text-align: center;">
-                                <div style="height: 200px; width: 40px; background: linear-gradient(180deg, #667eea 0%, #764ba2 100%); border-radius: 5px 5px 0 0; margin: 0 auto;"></div>
-                                <div style="margin-top: 10px; font-weight: 600;">三</div>
-                                <div style="font-size: 0.85rem; color: #718096;">2,590</div>
+                            <div style="text-align: center; flex: 1; max-width: 80px;">
+                                <div style="height: 175px; width: 40px; background: linear-gradient(180deg, #667eea 0%, #764ba2 100%); border-radius: 5px 5px 0 0; margin: 0 auto;"></div>
+                                <div style="margin-top: 8px; font-weight: 600; font-size: 0.9rem;">三</div>
+                                <div style="font-size: 0.8rem; color: #718096;">2,590</div>
                             </div>
-                            <div style="text-align: center;">
-                                <div style="height: 260px; width: 40px; background: linear-gradient(180deg, #667eea 0%, #764ba2 100%); border-radius: 5px 5px 0 0; margin: 0 auto;"></div>
-                                <div style="margin-top: 10px; font-weight: 600;">四</div>
-                                <div style="font-size: 0.85rem; color: #718096;">2,847</div>
+                            <div style="text-align: center; flex: 1; max-width: 80px;">
+                                <div style="height: 210px; width: 40px; background: linear-gradient(180deg, #667eea 0%, #764ba2 100%); border-radius: 5px 5px 0 0; margin: 0 auto;"></div>
+                                <div style="margin-top: 8px; font-weight: 600; font-size: 0.9rem;">四</div>
+                                <div style="font-size: 0.8rem; color: #718096;">2,847</div>
                             </div>
-                            <div style="text-align: center;">
-                                <div style="height: 240px; width: 40px; background: linear-gradient(180deg, #667eea 0%, #764ba2 100%); border-radius: 5px 5px 0 0; margin: 0 auto; opacity: 0.5;"></div>
-                                <div style="margin-top: 10px; font-weight: 600;">五</div>
-                                <div style="font-size: 0.85rem; color: #718096;">預測</div>
+                            <div style="text-align: center; flex: 1; max-width: 80px;">
+                                <div style="height: 195px; width: 40px; background: linear-gradient(180deg, #667eea 0%, #764ba2 100%); border-radius: 5px 5px 0 0; margin: 0 auto; opacity: 0.5;"></div>
+                                <div style="margin-top: 8px; font-weight: 600; font-size: 0.9rem;">五</div>
+                                <div style="font-size: 0.8rem; color: #718096;">預測</div>
                             </div>
                         </div>
                     </div>
